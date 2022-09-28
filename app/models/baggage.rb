@@ -1,0 +1,2 @@
+class Baggage < ApplicationRecord
+end

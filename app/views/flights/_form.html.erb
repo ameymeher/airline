@@ -1,0 +1,62 @@
+<%= form_with(model: flight) do |form| %>
+  <% if flight.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(flight.errors.count, "error") %> prohibited this flight from being saved:</h2>
+
+      <ul>
+        <% flight.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :name, style: "display: block" %>
+    <%= form.text_field :name %>
+  </div>
+
+  <div>
+    <%= form.label :flight_id, style: "display: block" %>
+    <%= form.text_field :flight_id %>
+  </div>
+
+  <div>
+    <%= form.label :class, style: "display: block" %>
+    <%= form.text_field :class %>
+  </div>
+
+  <div>
+    <%= form.label :manufacturer, style: "display: block" %>
+    <%= form.text_field :manufacturer %>
+  </div>
+
+  <div>
+    <%= form.label :source_city, style: "display: block" %>
+    <%= form.text_field :source_city %>
+  </div>
+
+  <div>
+    <%= form.label :destination_city, style: "display: block" %>
+    <%= form.text_field :destination_city %>
+  </div>
+
+  <div>
+    <%= form.label :capacity, style: "display: block" %>
+    <%= form.number_field :capacity %>
+  </div>
+
+  <div>
+    <%= form.label :status, style: "display: block" %>
+    <%= form.text_field :status %>
+  </div>
+
+  <div>
+    <%= form.label :cost, style: "display: block" %>
+    <%= form.text_field :cost %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>

@@ -1,0 +1,10 @@
+<p style="color: green"><%= notice %></p>
+
+<%= render @baggage %>
+
+<div>
+  <%= link_to "Edit this baggage", edit_baggage_path(@baggage) %> |
+  <%= link_to "Back to baggages", baggages_path %>
+
+  <%= button_to "Destroy this baggage", @baggage, method: :delete %>
+</div>

@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  flight_id: MyString
+  class: MyString
+  manufacturer: MyString
+  source_city: MyString
+  destination_city: MyString
+  capacity: 1
+  status: MyString
+  cost: 9.99
+
+two:
+  name: MyString
+  flight_id: MyString
+  class: MyString
+  manufacturer: MyString
+  source_city: MyString
+  destination_city: MyString
+  capacity: 1
+  status: MyString
+  cost: 9.99

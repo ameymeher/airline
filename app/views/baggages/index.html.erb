@@ -1,0 +1,14 @@
+<p style="color: green"><%= notice %></p>
+
+<h1>Baggages</h1>
+
+<div id="baggages">
+  <% @baggages.each do |baggage| %>
+    <%= render baggage %>
+    <p>
+      <%= link_to "Show this baggage", baggage %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New baggage", new_baggage_path %>

@@ -24,7 +24,7 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
     generate_unique_user_id
-    @user.is_admin = false
+    @user.is_admin = true
 
     respond_to do |format|
       if @user.save

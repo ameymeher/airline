@@ -21,6 +21,8 @@ class ReservationsController < ApplicationController
 
   # GET /reservations/1/edit
   def edit
+    @flight = helpers.get_flight(@reservation.flight_id)
+    @user = current_user
   end
 
   # POST /reservations or /reservations.json
@@ -49,11 +51,12 @@ class ReservationsController < ApplicationController
   def update
 
     old_no_of_passengers = @reservation.no_of_passengers
+    new_no_of_passengers = params[:reservation][:no_of_passengers].to_i
 
-    if(old_no_of_passengers > :no_of_passengers)
-      helpers.cancel_seats(@reservation.flight_id,old_no_of_passengers-:no_of_passengers)
-    elsif (old_no_of_passengers < :no_of_passengers)
-      helpers.book_seats(@reservation.flight_id,:no_of_passengers - old_no_of_passengers)
+    if(old_no_of_passengers > new_no_of_passengers)
+      helpers.cancel_seats(@reservation.flight_id,old_no_of_passengers-new_no_of_passengers)
+    elsif (old_no_of_passengers < new_no_of_passengers)
+      helpers.book_seats(@reservation.flight_id,new_no_of_passengers - old_no_of_passengers)
     end
 
     respond_to do |format|

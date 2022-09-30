@@ -1,14 +1,33 @@
 <p style="color: green"><%= notice %></p>
 
-<h1>Users</h1>
+<h1>Active user table</h1>
 
-<div id="users">
+<table>
+  <thead>
+  <tr>
+    <th>Name</th>
+    <th>Email</th>
+    <th>Mobile number</th>
+    <th>Is Admin</th>
+    <th colspan="4">Actions</th>
+  </tr>
+  </thead>
+
+  <tbody>
   <% @users.each do |user| %>
-    <%= render user %>
-    <p>
-      <%= link_to "Show this user", user %>
-    </p>
+    <tr>
+      <td><%= user.name %></td>
+      <td><%= user.email %></td>
+      <td><%= user.mobile %></td>
+      <td><%= user.is_admin %></td>
+      <td><%= link_to 'Show', user %></td>
+      <td><%= link_to 'View Reservations', reservations_path(:user_id => user.id) %></td>
+      <td><%= link_to 'Edit', edit_user_path(user) %></td>
+      <td><%= link_to 'Destroy', user, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+    </tr>
   <% end %>
-</div>
+  </tbody>
+</table>
 
 <%= link_to "New user", new_user_path %>
+<%= link_to 'Back to home', root_path %>

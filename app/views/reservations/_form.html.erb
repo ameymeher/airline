@@ -1,6 +1,6 @@
 <%= form_with(model: reservation) do |form| %>
   <% if reservation.errors.any? %>
-    <div style="color: red">
+    <div id="error_explanation" style="color: red">
       <h2><%= pluralize(reservation.errors.count, "error") %> prohibited this reservation from being saved:</h2>
 
       <ul>
@@ -10,38 +10,38 @@
       </ul>
     </div>
   <% end %>
-
+  <br>
   <div>
-    <%= form.label :reservation_id, style: "display: block" %>
-    <%= form.text_field :reservation_id %>
-  </div>
-
-  <div>
-    <%= form.label :no_of_passengers, style: "display: block" %>
+    <%= form.label :no_of_passengers, style: "display: block",onchange: "calculateTotalPrice();"  %>
     <%= form.number_field :no_of_passengers %>
   </div>
-
+  <br>
   <div>
     <%= form.label :ticket_class, style: "display: block" %>
-    <%= form.text_field :ticket_class %>
+    <%= form.select :ticket_class, [['Economy','economy'],['First','first'],['Business','business']] %>
   </div>
-
+  <br>
   <div>
-    <%= form.label :amenitites, style: "display: block" %>
-    <%= form.text_field :amenitites %>
+    <%= form.label :amenities, style: "display: block" %>
+    <%= form.select :amenities, [['None','none'],['Wifi','wifi'],['Meal Preference','meal_preference'],['Extra Leg Room','extra_legroom']], include_blank: true %>
   </div>
-
-  <div>
-    <%= form.label :no_of_baggage, style: "display: block" %>
-    <%= form.number_field :no_of_baggage %>
-  </div>
-
+  <br>
   <div>
     <%= form.label :cost, style: "display: block" %>
     <%= form.text_field :cost %>
   </div>
-
+  <br>
+  <div class="field">
+    <%= form.hidden_field :flight_id, value: @flight.flight_id %>
+  </div>
   <div>
     <%= form.submit %>
   </div>
 <% end %>
+
+<script type="text/javascript">
+    function calculateTotalPrice() {
+        var price = <%= @flight.cost %>;
+        document.getElementById('reservation_cost').value = document.getElementById('reservation_no_of_passengers').value * price;
+    }
+</script>

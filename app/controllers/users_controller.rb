@@ -1,4 +1,5 @@
 class UsersController < ApplicationController
+  skip_before_action :authorized, only: [:new, :create]
   before_action :set_user, only: %i[ show edit update destroy ]
 
   # GET /users or /users.json
@@ -22,6 +23,8 @@ class UsersController < ApplicationController
   # POST /users or /users.json
   def create
     @user = User.new(user_params)
+    generate_unique_user_id
+    @user.is_admin = false
 
     respond_to do |format|
       if @user.save
@@ -65,6 +68,15 @@ class UsersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def user_params
-      params.require(:user).permit(:name, :user_id, :credit_card_no, :address, :mobile, :email, :is_admin)
+      params.require(:user).permit(:name, :credit_card_no, :address, :mobile, :email, :password)
+    end
+
+    def generate_unique_user_id
+      number = 0
+      loop do
+        number = SecureRandom.random_number(10000000000)
+        break number unless User.where(user_id:number).exists?
+      end
+      @user.user_id = number
     end
 end

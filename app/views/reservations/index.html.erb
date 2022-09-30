@@ -2,6 +2,44 @@
 
 <h1>Reservations</h1>
 
+<table>
+  <thead>
+  <tr>
+    <th>Confirmation Number</th>
+    <th>User</th>
+    <th>Flight</th>
+    <th>Source city</th>
+    <th>Destination city</th>
+    <th>No of Passengers</th>
+    <th>Ticket Class</th>
+    <th>Amenities</th>
+    <th>Cost</th>
+    <th colspan="4">Actions</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @reservations.each do |reservation| %>
+    <tr>
+      <td><%= reservation.reservation_id %></td>
+      <td><%= User.find(reservation.user_id).name %></td>
+      <td><%= Flight.find(reservation.flight_id).name %></td>
+      <td><%= Flight.find(reservation.flight_id).source_city %></td>
+      <td><%= Flight.find(reservation.flight_id).destination_city %></td>
+      <td><%= reservation.no_of_passengers%></td>
+      <td><%= reservation.ticket_class %></td>
+      <td><%= reservation.amenities %></td>
+      <td><%= number_to_currency(reservation.cost) %></td>
+      <td><%= link_to 'Show', reservation %></td>
+      <td><%= link_to 'Manage Baggage', baggages_path(:reservation_id => reservation.id) %></td>
+      <td><%= link_to 'Edit', edit_reservation_path(reservation) %></td>
+      <td><%= link_to 'Destroy', reservation, method: :delete, data: { confirm: 'Do you confirm you want to cancel this booking?' } %></td>
+    </tr>
+  <% end %>
+  </tbody>
+
+</table>
+
 <div id="reservations">
   <% @reservations.each do |reservation| %>
     <%= render reservation %>
@@ -11,4 +49,5 @@
   <% end %>
 </div>
 
-<%= link_to "New reservation", new_reservation_path %>
+<%= link_to "New reservation", new_reservation_path %> <br>
+<%= link_to 'Back to home', root_path %>

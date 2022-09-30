@@ -1,5 +1,6 @@
 class FlightsController < ApplicationController
   before_action :set_flight, only: %i[ show edit update destroy ]
+  before_action :adminAuthorized, only: %i[ new edit create update destroy ]
 
   # GET /flights or /flights.json
   def index
@@ -22,6 +23,8 @@ class FlightsController < ApplicationController
   # POST /flights or /flights.json
   def create
     @flight = Flight.new(flight_params)
+    generate_unique_flight_id
+    set_status
 
     respond_to do |format|
       if @flight.save
@@ -36,6 +39,8 @@ class FlightsController < ApplicationController
 
   # PATCH/PUT /flights/1 or /flights/1.json
   def update
+    set_status
+
     respond_to do |format|
       if @flight.update(flight_params)
         format.html { redirect_to flight_url(@flight), notice: "Flight was successfully updated." }
@@ -65,6 +70,23 @@ class FlightsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def flight_params
-      params.require(:flight).permit(:name, :flight_id, :class, :manufacturer, :source_city, :destination_city, :capacity, :status, :cost)
+      params.require(:flight).permit(:name, :ticket_class, :manufacturer, :source_city, :destination_city, :capacity, :cost)
+    end
+
+    def generate_unique_flight_id
+      number = 0
+      loop do
+        number = SecureRandom.random_number(10000000000)
+        break number unless User.where(user_id:number).exists?
+      end
+      @flight.flight_id = number
+    end
+
+    def set_status
+      if @flight.capacity > 0
+        @flight.status = "Available"
+      elsif
+        @flight.status = "Booked"
+      end
     end
 end

@@ -14,7 +14,7 @@ class ReservationsTest < ApplicationSystemTestCase
     visit reservations_url
     click_on "New reservation"
 
-    fill_in "Amenitites", with: @reservation.amenitites
+    fill_in "amenities", with: @reservation.amenities
     fill_in "Cost", with: @reservation.cost
     fill_in "No of baggage", with: @reservation.no_of_baggage
     fill_in "No of passengers", with: @reservation.no_of_passengers

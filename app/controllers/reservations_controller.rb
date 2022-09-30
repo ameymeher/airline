@@ -1,4 +1,5 @@
 class ReservationsController < ApplicationController
+
   before_action :set_reservation, only: %i[ show edit update destroy ]
 
   # GET /reservations or /reservations.json
@@ -13,6 +14,8 @@ class ReservationsController < ApplicationController
   # GET /reservations/new
   def new
     @reservation = Reservation.new
+    @flight = helpers.get_flight(params[:flight_id])
+    @user = current_user
   end
 
   # GET /reservations/1/edit
@@ -21,7 +24,13 @@ class ReservationsController < ApplicationController
 
   # POST /reservations or /reservations.json
   def create
+    @flight = helpers.get_flight(params[:flight_id])
     @reservation = Reservation.new(reservation_params)
+    set_unique_reservation_id
+    @reservation.user_id = current_user.user_id
+
+    #TODO add if else for false value return from helper method
+    helpers.book_seats(@reservation.flight_id,@reservation.no_of_passengers)
 
     respond_to do |format|
       if @reservation.save
@@ -36,6 +45,15 @@ class ReservationsController < ApplicationController
 
   # PATCH/PUT /reservations/1 or /reservations/1.json
   def update
+
+    old_no_of_passengers = @reservation.no_of_passengers
+
+    if(old_no_of_passengers > :no_of_passengers)
+      helpers.cancel_seats(@reservation.flight_id,old_no_of_passengers-:no_of_passengers)
+    elsif (old_no_of_passengers < :no_of_passengers)
+      helpers.book_seats(@reservation.flight_id,:no_of_passengers - old_no_of_passengers)
+    end
+
     respond_to do |format|
       if @reservation.update(reservation_params)
         format.html { redirect_to reservation_url(@reservation), notice: "Reservation was successfully updated." }
@@ -49,6 +67,7 @@ class ReservationsController < ApplicationController
 
   # DELETE /reservations/1 or /reservations/1.json
   def destroy
+    helpers.cancel_seats(@flight.flight_id,@reservation.no_of_passengers)
     @reservation.destroy
 
     respond_to do |format|
@@ -65,6 +84,15 @@ class ReservationsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def reservation_params
-      params.require(:reservation).permit(:reservation_id, :no_of_passengers, :ticket_class, :amenitites, :no_of_baggage, :cost)
+      params.require(:reservation).permit(:reservation_id, :no_of_passengers, :ticket_class, :amenities, :no_of_baggage, :cost, :flight_id)
+    end
+
+    def set_unique_reservation_id
+      number = 0
+      loop do
+        number = SecureRandom.random_number(10000000000)
+        break number unless User.where(user_id:number).exists?
+      end
+      @reservation.reservation_id = number
     end
 end

@@ -14,6 +14,7 @@ class ReservationsController < ApplicationController
   # GET /reservations/new
   def new
     @reservation = Reservation.new
+    @reservation.flight_id = params[:flight_id]
     @flight = helpers.get_flight(params[:flight_id])
     @user = current_user
   end
@@ -24,16 +25,17 @@ class ReservationsController < ApplicationController
 
   # POST /reservations or /reservations.json
   def create
-    @flight = helpers.get_flight(params[:flight_id])
+    @flight = helpers.get_flight(params[:reservation][:flight_id])
     @reservation = Reservation.new(reservation_params)
     set_unique_reservation_id
-    @reservation.user_id = current_user.user_id
+    @reservation.user_id = current_user.id
+    @reservation.flight_id = @flight.id
 
     #TODO add if else for false value return from helper method
-    helpers.book_seats(@reservation.flight_id,@reservation.no_of_passengers)
+    helpers.book_seats(@flight.id,@reservation.no_of_passengers)
 
     respond_to do |format|
-      if @reservation.save
+      if @reservation.save!
         format.html { redirect_to reservation_url(@reservation), notice: "Reservation was successfully created." }
         format.json { render :show, status: :created, location: @reservation }
       else
@@ -67,7 +69,7 @@ class ReservationsController < ApplicationController
 
   # DELETE /reservations/1 or /reservations/1.json
   def destroy
-    helpers.cancel_seats(@flight.flight_id,@reservation.no_of_passengers)
+    helpers.cancel_seats(@flight.id,@reservation.no_of_passengers)
     @reservation.destroy
 
     respond_to do |format|

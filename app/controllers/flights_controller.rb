@@ -23,7 +23,7 @@ class FlightsController < ApplicationController
   # POST /flights or /flights.json
   def create
     @flight = Flight.new(flight_params)
-    generate_unique_flight_id
+    generate_unique_confirmation_no
     set_status
 
     respond_to do |format|
@@ -73,13 +73,13 @@ class FlightsController < ApplicationController
       params.require(:flight).permit(:name, :ticket_class, :manufacturer, :source_city, :destination_city, :capacity, :cost)
     end
 
-    def generate_unique_flight_id
+    def generate_unique_confirmation_no
       number = 0
       loop do
         number = SecureRandom.random_number(10000000000)
         break number unless User.where(user_id:number).exists?
       end
-      @flight.flight_id = number
+      @flight.confirmation_no = number
     end
 
     def set_status

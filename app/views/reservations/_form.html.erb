@@ -11,6 +11,17 @@
     </div>
   <% end %>
   <br>
+  <div class="field">
+    <%= form.label :flight_id, style: "display: block"%>
+    <%= form.text_field :flight_id, value: @flight.id, :readonly => true%>
+  </div>
+  <br>
+  <div class="field">
+    <%= form.label :flight_name, style: "display: block"%>
+    <%= form.text_field :flight_name, value: @flight.name, :readonly => true%>
+  </div>
+  <br>
+  <div>
   <div>
     <%= form.label :no_of_passengers, style: "display: block",onchange: "calculateTotalPrice();"  %>
     <%= form.number_field :no_of_passengers %>
@@ -31,10 +42,6 @@
     <%= form.text_field :cost %>
   </div>
   <br>
-  <div class="field">
-    <%= form.hidden_field :flight_id, value: @flight.flight_id %>
-  </div>
-  <div>
     <%= form.submit %>
   </div>
 <% end %>

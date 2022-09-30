@@ -1,7 +1,7 @@
 module FlightsHelper
 
   def get_flight(flight_id)
-    return Flight.find_by_flight_id(flight_id)
+    return Flight.find(flight_id)
   end
   def book_seats(flight_id,seats)
     flight = get_flight(flight_id)

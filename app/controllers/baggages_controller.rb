@@ -3,7 +3,8 @@ class BaggagesController < ApplicationController
 
   # GET /baggages or /baggages.json
   def index
-    @baggages = Baggage.all
+      @baggages = Baggage.where(reservation_id: params[:reservation_id])
+      $reservation_id = params[:reservation_id]
   end
 
   # GET /baggages/1 or /baggages/1.json
@@ -13,18 +14,24 @@ class BaggagesController < ApplicationController
   # GET /baggages/new
   def new
     @baggage = Baggage.new
+    @reservation = Reservation.find_by(id: $reservation_id)
   end
 
   # GET /baggages/1/edit
   def edit
+    @reservation = Reservation.find_by(id: $reservation_id)
   end
 
   # POST /baggages or /baggages.json
   def create
+    @reservation = Reservation.find_by(id: $reservation_id)
     @baggage = Baggage.new(baggage_params)
-
+    @baggage.reservation = @reservation
+    @baggage.user = @current_user
     respond_to do |format|
       if @baggage.save
+        @reservation.cost = @reservation.cost + @baggage.cost
+        @reservation.save
         format.html { redirect_to baggage_url(@baggage), notice: "Baggage was successfully created." }
         format.json { render :show, status: :created, location: @baggage }
       else
@@ -36,8 +43,12 @@ class BaggagesController < ApplicationController
 
   # PATCH/PUT /baggages/1 or /baggages/1.json
   def update
+    old_baggage_cost = @baggage.cost
+    @reservation = Reservation.find_by(id: $reservation_id)
     respond_to do |format|
       if @baggage.update(baggage_params)
+        @reservation.cost = @reservation.cost - old_baggage_cost + @baggage.cost
+        @reservation.save
         format.html { redirect_to baggage_url(@baggage), notice: "Baggage was successfully updated." }
         format.json { render :show, status: :ok, location: @baggage }
       else
@@ -49,10 +60,13 @@ class BaggagesController < ApplicationController
 
   # DELETE /baggages/1 or /baggages/1.json
   def destroy
+    @reservation = Reservation.find_by(id: $reservation_id)
+    @reservation.cost = @reservation.cost - @baggage.cost
+    @reservation.save
     @baggage.destroy
 
     respond_to do |format|
-      format.html { redirect_to baggages_url, notice: "Baggage was successfully destroyed." }
+      format.html { redirect_to baggages_path(:reservation_id => @baggage.reservation_id), notice: "Baggage was successfully destroyed." }
       format.json { head :no_content }
     end
   end
@@ -65,6 +79,6 @@ class BaggagesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def baggage_params
-      params.require(:baggage).permit(:baggage_id, :weight, :cost)
+      params.require(:baggage).permit(:id, :weight, :cost, :reservation_id)
     end
 end

@@ -12,21 +12,22 @@
   <% end %>
 
   <div>
-    <%= form.label :baggage_id, style: "display: block" %>
-    <%= form.text_field :baggage_id %>
-  </div>
-
-  <div>
     <%= form.label :weight, style: "display: block" %>
-    <%= form.text_field :weight %>
+    <%= form.number_field :weight, :id => 'weight', min: 1, onchange: "calculateTotalPrice();" %>
   </div>
 
   <div>
     <%= form.label :cost, style: "display: block" %>
-    <%= form.text_field :cost %>
+    <%= form.text_field :cost, :id => 'cost', :readonly => true %>
   </div>
 
   <div>
     <%= form.submit %>
   </div>
 <% end %>
+<script type="text/javascript">
+    function calculateTotalPrice() {
+        var price = "10";
+        document.getElementById('cost').value = document.getElementById('weight').value * price;
+    }
+</script>

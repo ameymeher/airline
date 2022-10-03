@@ -1,9 +1,8 @@
 <h1>New baggage</h1>
-
 <%= render "form", baggage: @baggage %>
 
 <br>
 
 <div>
-  <%= link_to "Back to baggages", baggages_path %>
+  <%= link_to "Back to baggages", baggages_path(:reservation_id => @reservation.id) %>
 </div>

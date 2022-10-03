@@ -4,7 +4,7 @@
 
 <div>
   <%= link_to "Edit this baggage", edit_baggage_path(@baggage) %> |
-  <%= link_to "Back to baggages", baggages_path %>
+  <%= link_to "Back to baggages", baggages_path(:reservation_id => @baggage.reservation_id) %>
 
   <%= button_to "Destroy this baggage", @baggage, method: :delete %>
 </div>

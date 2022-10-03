@@ -8,8 +8,7 @@ class User < ApplicationRecord
   validates :email, presence: true, format: { with: VALID_EMAIL_REGEX }
   validates :mobile, length: {is: 10}, format: { with: /\A\d+\z/}, allow_nil: true, allow_blank: true
   validates :name, presence: true
-  VALID_PASSWORD_REGEX = /\A(?=.*[a-zA-Z])(?=.*[0-9]).{6,}\z/
-  validates_presence_of :password, format: { with: VALID_PASSWORD_REGEX }, :message => "should be minimum 6 characters long with one digit included"
+  validates :password, length: {minimum: 6, maximum: 8}
 end
 
 

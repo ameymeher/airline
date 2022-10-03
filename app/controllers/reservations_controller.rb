@@ -4,7 +4,13 @@ class ReservationsController < ApplicationController
 
   # GET /reservations or /reservations.json
   def index
-    @reservations = Reservation.all
+    if current_user.is_admin
+      puts 'Admin'
+      @reservations = Reservation.all
+    else
+      puts 'Normal User'
+      @reservations = current_user.reservations
+    end
   end
 
   # GET /reservations/1 or /reservations/1.json
@@ -13,31 +19,38 @@ class ReservationsController < ApplicationController
 
   # GET /reservations/new
   def new
-    @reservation = Reservation.new
-    @reservation.flight_id = params[:flight_id]
-    @flight = helpers.get_flight(params[:flight_id])
-    @user = current_user
+    @reservation = current_user.reservations.build
+    @reservation.no_of_passengers = 0
+    if @flight.nil?
+      @flight = Flight.find(params[:flight_id])
+      $fl = @flight
+      puts 'Found flight oject and id'
+      puts @flight.id
+    end
+    # @reservation = Reservation.new
+    # @reservation.flight_id = params[:flight_id]
+    # @flight = helpers.get_flight(params[:flight_id])
+    # @user = current_user
   end
 
   # GET /reservations/1/edit
   def edit
-    @flight = helpers.get_flight(@reservation.flight_id)
-    @user = current_user
+    @flight = Flight.find($fl.id)
   end
 
   # POST /reservations or /reservations.json
   def create
-    @flight = helpers.get_flight(params[:reservation][:flight_id])
-    @reservation = Reservation.new(reservation_params)
-    set_unique_reservation_id
-    @reservation.user_id = current_user.id
-    @reservation.flight_id = @flight.id
-
-    #TODO add if else for false value return from helper method
-    helpers.book_seats(@flight.id,@reservation.no_of_passengers)
-
+    @reservation = current_user.reservations.build(reservation_params)
+    @reservation.flight_id = $fl.id
+    @flight = Flight.find($fl.id)
+    @reservation.cost = @flight.cost * @reservation.no_of_passengers
+    # @reservation.update_attribute(:cost, total_cost)
+    # #TODO add if else for false value return from helper method
     respond_to do |format|
-      if @reservation.save!
+      if @reservation.save
+        helpers.book_seats(@flight.id,@reservation.no_of_passengers)
+        total_cost = @flight.cost * @reservation.no_of_passengers
+        @reservation.update_attribute(:cost, total_cost)
         format.html { redirect_to reservation_url(@reservation), notice: "Reservation was successfully created." }
         format.json { render :show, status: :created, location: @reservation }
       else
@@ -55,8 +68,12 @@ class ReservationsController < ApplicationController
 
     if(old_no_of_passengers > new_no_of_passengers)
       helpers.cancel_seats(@reservation.flight_id,old_no_of_passengers-new_no_of_passengers)
+      total_cost = Flight.find(@reservation.flight_id).cost * new_no_of_passengers
+      @reservation.update_attribute(:cost, total_cost)
     elsif (old_no_of_passengers < new_no_of_passengers)
       helpers.book_seats(@reservation.flight_id,new_no_of_passengers - old_no_of_passengers)
+      total_cost = Flight.find(@reservation.flight_id).cost * new_no_of_passengers
+      @reservation.update_attribute(:cost, total_cost)
     end
 
     respond_to do |format|
@@ -72,7 +89,7 @@ class ReservationsController < ApplicationController
 
   # DELETE /reservations/1 or /reservations/1.json
   def destroy
-    helpers.cancel_seats(@flight.id,@reservation.no_of_passengers)
+    helpers.cancel_seats(@reservation.flight_id,@reservation.no_of_passengers)
     @reservation.destroy
 
     respond_to do |format|
@@ -89,15 +106,7 @@ class ReservationsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def reservation_params
-      params.require(:reservation).permit(:reservation_id, :no_of_passengers, :ticket_class, :amenities, :no_of_baggage, :cost, :flight_id)
+      params.require(:reservation).permit(:reservation_id, :no_of_passengers, :ticket_class, :amenities, :no_of_baggage, :cost, :flight_id, :user_id)
     end
 
-    def set_unique_reservation_id
-      number = 0
-      loop do
-        number = SecureRandom.random_number(10000000000)
-        break number unless User.where(user_id:number).exists?
-      end
-      @reservation.reservation_id = number
-    end
 end

@@ -23,8 +23,8 @@
   <br>
   <div>
   <div>
-    <%= form.label :no_of_passengers, style: "display: block",onchange: "calculateTotalPrice();"  %>
-    <%= form.number_field :no_of_passengers %>
+    <%= form.label :no_of_passengers, style: "display: block" %>
+    <%= form.number_field :no_of_passengers, :id => 'no_of_passengers', max:@flight.capacity+@reservation.no_of_passengers , min:1 %>
   </div>
   <br>
   <div>
@@ -34,21 +34,17 @@
   <br>
   <div>
     <%= form.label :amenities, style: "display: block" %>
-    <%= form.select :amenities, [['None','none'],['Wifi','wifi'],['Meal Preference','meal_preference'],['Extra Leg Room','extra_legroom']], include_blank: true %>
-  </div>
-  <br>
-  <div>
-    <%= form.label :cost, style: "display: block" %>
-    <%= form.text_field :cost %>
+    <%= form.select :amenities, [['None','none'],['Wifi','wifi'],['Meal Preference','meal_preference'],['Extra Leg Room','extra_legroom']] %>
   </div>
   <br>
     <%= form.submit %>
   </div>
 <% end %>
 
-<script type="text/javascript">
+<script>
     function calculateTotalPrice() {
-        var price = <%= @flight.cost %>;
-        document.getElementById('reservation_cost').value = document.getElementById('reservation_no_of_passengers').value * price;
+        var price = "<%= @flight.cost %>";
+        price = parseInt(price);
+        document.getElementById('cost').value = document.getElementById('no_of_passengers').value * price;
     }
 </script>

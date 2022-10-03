@@ -23,8 +23,8 @@ class UsersController < ApplicationController
   # POST /users or /users.json
   def create
     @user = User.new(user_params)
-    generate_unique_user_id
-    @user.is_admin = true
+    # generate_unique_user_id
+    @user.is_admin = false
 
     respond_to do |format|
       if @user.save
@@ -71,12 +71,12 @@ class UsersController < ApplicationController
       params.require(:user).permit(:name, :credit_card_no, :address, :mobile, :email, :password)
     end
 
-    def generate_unique_user_id
-      number = 0
-      loop do
-        number = SecureRandom.random_number(10000000000)
-        break number unless User.where(user_id:number).exists?
-      end
-      @user.user_id = number
-    end
+    # def generate_unique_user_id
+    #   number = 0
+    #   loop do
+    #     number = SecureRandom.random_number(10000000000)
+    #     break number unless User.where(user_id:number).exists?
+    #   end
+    #   @user.user_id = number
+    # end
 end

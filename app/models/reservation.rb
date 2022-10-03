@@ -5,7 +5,8 @@ class Reservation < ApplicationRecord
   validates :amenities, presence: true, inclusion: { in: %w(none wifi meal_preference extra_legroom),
                                                      message: "%{value} is not a valid amenity" }
   validates :cost, presence: true, numericality: true
-  has_one :flight
+  belongs_to :flight
   belongs_to :user
   has_many :baggages , dependent: :delete_all
+
 end

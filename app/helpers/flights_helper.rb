@@ -1,5 +1,4 @@
 module FlightsHelper
-
   def get_flight(flight_id)
     return Flight.find(flight_id)
   end
@@ -8,7 +7,7 @@ module FlightsHelper
     if(seats <= flight.capacity)
       flight.capacity -= seats
       if flight.capacity == 0
-        flight.status = "Full"
+        flight.status = "Booked"
       end
       flight.save
       return true

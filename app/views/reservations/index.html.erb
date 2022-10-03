@@ -33,7 +33,7 @@
       <td><%= link_to 'Show', reservation %></td>
       <td><%= link_to 'Manage Baggage', baggages_path(:reservation_id => reservation.id) %></td>
       <td><%= link_to 'Edit', edit_reservation_path(reservation) %></td>
-      <td><%= link_to 'Destroy', reservation, method: :delete, data: { confirm: 'Do you confirm you want to cancel this booking?' } %></td>
+      <td><%= button_to 'Destroy', reservation, method: :delete, data: { confirm: 'Do you confirm you want to cancel this booking?' } %></td>
     </tr>
   <% end %>
   </tbody>

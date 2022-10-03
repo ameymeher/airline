@@ -11,6 +11,13 @@
   </head>
 
   <body>
+    <% if current_user %>
+      <% if current_user.is_admin %>
+        <p>Role: <u>Admin</u> <br>Name: <%= current_user.name%></p>
+      <% else %>
+        <p>Role: <b>User</b><br>Name: <%= current_user.name%></p>
+        <% end %>
+    <% end %>
     <%= yield %>
   </body>
 </html>

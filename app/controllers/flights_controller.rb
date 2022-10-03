@@ -23,11 +23,14 @@ class FlightsController < ApplicationController
   # POST /flights or /flights.json
   def create
     @flight = Flight.new(flight_params)
-    generate_unique_confirmation_no
-    set_status
-
+    # errors.add('Source and Destination cannot be same.') if @flight.source_city.downcase == @flight.destination_city.downcase
     respond_to do |format|
       if @flight.save
+        if @flight.capacity > 0
+          @flight.update_attribute(:status, 'Available')
+        elsif @flight.capacity == 0
+          @flight.update_attribute(:status, 'Booked')
+        end
         format.html { redirect_to flight_url(@flight), notice: "Flight was successfully created." }
         format.json { render :show, status: :created, location: @flight }
       else
@@ -39,12 +42,20 @@ class FlightsController < ApplicationController
 
   # PATCH/PUT /flights/1 or /flights/1.json
   def update
-    set_status
-
     respond_to do |format|
       if @flight.update(flight_params)
+        if @flight.capacity > 0
+          @flight.update_attribute(:status, "Available")
+        elsif @flight.capacity == 0
+          @flight.update_attribute(:status, "Booked")
+        end
         format.html { redirect_to flight_url(@flight), notice: "Flight was successfully updated." }
         format.json { render :show, status: :ok, location: @flight }
+        # if @flight.capacity > 0
+        #   @flight.status = "Available"
+        # elsif @flight.capacity == 0
+        #   @flight.status = "Booked"
+        # end
       else
         format.html { render :edit, status: :unprocessable_entity }
         format.json { render json: @flight.errors, status: :unprocessable_entity }
@@ -73,20 +84,12 @@ class FlightsController < ApplicationController
       params.require(:flight).permit(:name, :ticket_class, :manufacturer, :source_city, :destination_city, :capacity, :cost)
     end
 
-    def generate_unique_confirmation_no
-      number = 0
-      loop do
-        number = SecureRandom.random_number(10000000000)
-        break number unless User.where(user_id:number).exists?
-      end
-      @flight.confirmation_no = number
-    end
-
-    def set_status
-      if @flight.capacity > 0
-        @flight.status = "Available"
-      elsif
-        @flight.status = "Booked"
-      end
-    end
+    # def generate_unique_confirmation_no
+    #   number = 0
+    #   loop do
+    #     number = SecureRandom.random_number(10000000000)
+    #     break number unless User.where(user_id:number).exists?
+    #   end
+    #   @flight.confirmation_no = number
+    # end
 end

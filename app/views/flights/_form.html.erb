@@ -1,4 +1,4 @@
-<%= form_with(model: flight) do |form| %>
+<%= form_with(model: flight, :html => { :onsubmit => "return isSame();" }) do |form| %>
   <% if flight.errors.any? %>
     <div style="color: red">
       <h2><%= pluralize(flight.errors.count, "error") %> prohibited this flight from being saved:</h2>
@@ -28,12 +28,13 @@
   <br>
   <div>
     <%= form.label :source_city, style: "display: block" %>
-    <%= form.text_field :source_city %>
+    <%= form.text_field :source_city, id: 'source_city'%>
   </div>
   <br>
   <div>
+
     <%= form.label :destination_city, style: "display: block" %>
-    <%= form.text_field :destination_city %>
+    <%= form.text_field :destination_city, id: 'destination_city'%>
   </div>
   <br>
   <div>
@@ -43,10 +44,22 @@
   <br>
   <div>
     <%= form.label :cost, style: "display: block" %>
-    <%= form.text_field :cost %>
+    <%= form.number_field :cost %>
   </div>
   <br>
   <div>
-    <%= form.submit %>
+    <%= form.submit%>
   </div>
+
+<script>
+function isSame(){
+var destination_city = document.getElementById("destination_city");
+var source_city = document.getElementById("source_city");
+  if (destination_city.value.toLowerCase() == source_city.value.toLowerCase()) {
+      alert('Source and Destination cannot be same.');
+      return false;
+  }
+}
+</script>
+
 <% end %>

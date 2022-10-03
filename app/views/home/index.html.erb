@@ -7,8 +7,15 @@
 <% if current_user %>
   Logged in as <%= current_user.name %>.<br><br>
   <%= link_to "Search flights", flights_path %> <br>
-  <%= link_to "My reservations", reservations_url %> <br>
+  <% if current_user.is_admin %>
+  <%= link_to "All reservations", reservations_url %>
+  <% else %>
+  <%= link_to "My Reservations", reservations_url %>
+  <% end %>
   <br>
+  <%= link_to 'My Account', edit_user_path(current_user) %> <br>
+  <br>
+
   <% if current_user["is_admin"]%>
     <%= link_to 'Manage Users', users_path %> <br>
     <%= link_to 'Manage Flights', flights_path %> <br>

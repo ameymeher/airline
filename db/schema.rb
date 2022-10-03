@@ -11,17 +11,14 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema[7.0].define(version: 2022_09_30_183429) do
-  # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
-
   create_table "baggages", force: :cascade do |t|
     t.string "baggage_id"
     t.decimal "weight"
     t.decimal "cost"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "user_id", null: false
-    t.bigint "reservation_id", null: false
+    t.integer "user_id", null: false
+    t.integer "reservation_id", null: false
     t.index ["baggage_id"], name: "index_baggages_on_baggage_id", unique: true
     t.index ["reservation_id"], name: "index_baggages_on_reservation_id"
     t.index ["user_id"], name: "index_baggages_on_user_id"
@@ -51,8 +48,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_30_183429) do
     t.decimal "cost"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "user_id", null: false
-    t.bigint "flight_id", null: false
+    t.integer "user_id", null: false
+    t.integer "flight_id", null: false
     t.index ["flight_id"], name: "index_reservations_on_flight_id"
     t.index ["reservation_id"], name: "index_reservations_on_reservation_id", unique: true
     t.index ["user_id"], name: "index_reservations_on_user_id"
